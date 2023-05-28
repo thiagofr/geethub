@@ -7,7 +7,8 @@ import org.koin.dsl.module
 val useCaseModule = module {
     factory<GetUserListUseCase>{
         GetUserListUseCaseImpl(
-            repository = get()
+            repository = get(),
+            mapper = get(),
         )
     }
 }

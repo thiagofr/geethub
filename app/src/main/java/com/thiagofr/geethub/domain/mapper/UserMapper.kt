@@ -7,7 +7,10 @@ import com.thiagofr.geethub.domain.model.User
 class UserMapper: Mapper<UserResponse, User> {
     override fun map(from: UserResponse): User {
         return User(
-            login = from.login
+            id = from.id,
+            login = from.login,
+            type = from.type,
+            avatarUrl = from.avatarUrl,
         )
     }
 }

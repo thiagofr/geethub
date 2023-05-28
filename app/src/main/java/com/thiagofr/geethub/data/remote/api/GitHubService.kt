@@ -2,11 +2,12 @@ package com.thiagofr.geethub.data.remote.api
 
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.Call
 
 interface GitHubService {
     @GET("/users")
-    suspend fun getUsersAsync(): List<UserResponse>
+    fun getUsers(): Call<List<UserResponse>>
 
     @GET("/users/{user}")
-    suspend fun getUser(@Path("user")login: String)
+    fun getUser(@Path("user")login: String)
 }

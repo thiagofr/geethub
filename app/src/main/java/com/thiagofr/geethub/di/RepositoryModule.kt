@@ -8,7 +8,6 @@ val repositoryModule = module {
     factory<UserRepository>{
         UserRemoteRepository(
             api = get(),
-            mapper = get(),
         )
     }
 }

@@ -1,15 +1,14 @@
 package com.thiagofr.geethub.domain.repository
 
 import com.thiagofr.geethub.data.remote.api.GitHubService
-import com.thiagofr.geethub.domain.mapper.UserMapper
-import com.thiagofr.geethub.domain.model.User
+import com.thiagofr.geethub.data.remote.api.Response
+import com.thiagofr.geethub.data.remote.api.UserResponse
+import com.thiagofr.geethub.util.getResult
 
 class UserRemoteRepository(
-    private val api: GitHubService,
-    private val mapper: UserMapper
+    private val api: GitHubService
 ) : UserRepository {
-    override suspend fun getUserList(): List<User> {
-        val response = api.getUsersAsync()
-        return response.map { mapper.map(it) }
+    override suspend fun getUserList(): Response<List<UserResponse>> {
+        return api.getUsers().getResult()
     }
 }

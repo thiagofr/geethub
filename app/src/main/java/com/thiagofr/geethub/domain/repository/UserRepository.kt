@@ -1,9 +1,9 @@
 package com.thiagofr.geethub.domain.repository
 
-import com.thiagofr.geethub.domain.model.User
+import com.thiagofr.geethub.data.remote.api.Response
+import com.thiagofr.geethub.data.remote.api.UserResponse
 
 interface UserRepository {
-
-    suspend fun getUserList(): List<User>
+    suspend fun getUserList(): Response<List<UserResponse>>
 
 }
