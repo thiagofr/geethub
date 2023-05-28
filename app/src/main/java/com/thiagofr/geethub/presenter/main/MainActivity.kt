@@ -2,22 +2,26 @@ package com.thiagofr.geethub.presenter.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.thiagofr.geethub.databinding.ActivityMainBinding
 import com.thiagofr.geethub.domain.model.User
+import com.thiagofr.geethub.presenter.main.adapter.UsersAdapter
 import com.thiagofr.geethub.util.gone
 import com.thiagofr.geethub.util.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private var binding: ActivityMainBinding? = null
 
     private val mainViewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding?.root)
 
         mainViewModel.viewState.observe(this) {
             when (it) {
@@ -29,28 +33,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUserList(userList: List<User>) {
-        with(binding) {
-            rvUserList.visible()
-            loading.gone()
+        binding?.let {
+            with(it.rvUserList) {
+                layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.VERTICAL, false)
+                adapter = UsersAdapter(userList) { user ->
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Click no usuário ${user.login}",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+                visible()
+            }
+            it.loading.gone()
         }
     }
 
     private fun setError() {
-        with(binding) {
-            loading.gone()
-            rvUserList.gone()
-            error.visible()
+        binding?.let {
+            it.loading.gone()
+            it.rvUserList.gone()
+            it.error.visible()
         }
     }
 
     private fun setLoading(isLoading: Boolean) {
-        with(binding) {
+        binding?.let {
             if (isLoading) {
-                loading.visible()
-                rvUserList.gone()
-                error.gone()
+                it.loading.visible()
+                it.rvUserList.gone()
+                it.error.gone()
             } else {
-                loading.gone()
+                it.loading.gone()
             }
         }
     }
@@ -58,5 +73,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mainViewModel.getUsers()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 }

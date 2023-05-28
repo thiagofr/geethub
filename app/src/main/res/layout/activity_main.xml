@@ -10,18 +10,17 @@
         android:id="@+id/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Carregando"
+        android:text="@string/loading"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_user_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lista de usuários obtida"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:textSize="22sp"
         tools:visibility="visible"
         android:visibility="gone"
@@ -34,7 +33,7 @@
         android:id="@+id/error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Error"
+        android:text="@string/error"
         android:textSize="22sp"
         tools:visibility="visible"
         android:visibility="gone"
