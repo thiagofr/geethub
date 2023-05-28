@@ -1,0 +1,52 @@
+# Android Studio
+*.iml
+.gradle/
+/local.properties
+/.idea/caches/
+/.idea/libraries/
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/dictionaries
+/.idea/gradle.xml
+/.idea/vcs.xml
+/.idea/jsLibraryMappings.xml
+
+# Build
+/build/
+/captures/
+
+# Gradle
+/.gradle/
+/gradle/
+/gradlew
+/gradlew.bat
+/gradle.properties
+/gradle-local.properties
+
+# Generated Files
+/generated/
+/bin/
+
+# Local configuration file (sdk path, etc)
+/local.properties
+
+# Signing files
+/*.jks
+
+# Dependency directories
+/.idea/com_android_support_animated_vector_drawable_*
+/.idea/com_android_support_appcompat_v7_*
+/.idea/com_android_support_constraint_*
+/.idea/com_android_support_design_*
+/.idea/com_android_support_recyclerview_*
+/.idea/com_android_support_support_compat_*
+/.idea/com_android_support_support_core_ui_*
+/.idea/com_android_support_support_core_utils_*
+/.idea/com_android_support_support_fragment_*
+/.idea/com_android_support_support_vector_drawable_*
+/.idea/com_android_support_transition_*
+
+# Android Studio Navigation editor temp files
+/.idea/navEditor.xml
