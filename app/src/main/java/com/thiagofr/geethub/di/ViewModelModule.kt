@@ -1,6 +1,6 @@
 package com.thiagofr.geethub.di
 
-import com.thiagofr.geethub.presenter.MainViewModel
+import com.thiagofr.geethub.presenter.main.MainViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
