@@ -1,4 +1,4 @@
-package com.thiagofr.geethub.presenter.main.adapter
+package com.thiagofr.geethub.presenter.userlist.adapter
 
 import android.view.View
 import android.widget.ImageView

@@ -1,17 +1,18 @@
 package com.thiagofr.geethub.domain.usecase
 
 import com.thiagofr.geethub.data.remote.api.Response
-import com.thiagofr.geethub.domain.mapper.UserMapper
+import com.thiagofr.geethub.domain.mapper.RepositoryMapper
+import com.thiagofr.geethub.domain.model.Repository
 import com.thiagofr.geethub.domain.model.Result
-import com.thiagofr.geethub.domain.model.User
 import com.thiagofr.geethub.domain.repository.UserRepository
 
-class GetUserListUseCaseImpl(
-    private val repository: UserRepository,
-    private val mapper: UserMapper
-) : GetUserListUseCase {
-    override suspend fun invoke(): Result<List<User>> {
-        return when (val response = repository.getUserList()) {
+class GetRepositoryListByUserUseCaseImpl(
+    val repository: UserRepository,
+    val mapper: RepositoryMapper
+) : GetRepositoryListByUserUseCase {
+    override suspend fun invoke(login: String): Result<List<Repository>> {
+
+        return when (val response = repository.getRepositoryListByUser(login)) {
             is Response.Success ->
                 Result.Success(
                     response.data.map {

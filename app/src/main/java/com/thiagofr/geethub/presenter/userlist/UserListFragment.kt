@@ -1,4 +1,4 @@
-package com.thiagofr.geethub.presenter.main
+package com.thiagofr.geethub.presenter.userlist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,26 +10,29 @@ import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.thiagofr.geethub.R
-import com.thiagofr.geethub.databinding.FragmentMainBinding
+import com.thiagofr.geethub.databinding.FragmentUserListBinding
 import com.thiagofr.geethub.domain.model.User
-import com.thiagofr.geethub.presenter.main.adapter.UsersAdapter
+import com.thiagofr.geethub.presenter.userlist.adapter.UsersAdapter
+import com.thiagofr.geethub.util.LOGIN_EXTRA
 import com.thiagofr.geethub.util.gone
+import com.thiagofr.geethub.util.setDividerItemDecoration
 import com.thiagofr.geethub.util.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.thiagofr.geethub.presenter.userlist.UserListViewAction as ViewAction
 
-class MainFragment : Fragment() {
+class UserListFragment : Fragment() {
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentUserListBinding? = null
     private val binding get() = _binding!!
 
-    private val mainViewModel: MainViewModel by viewModel()
+    private val userListViewModel: UserListViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentUserListBinding.inflate(inflater, container, false)
         setupToolbar()
         return binding.root
     }
@@ -42,11 +45,11 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel.viewState.observe(viewLifecycleOwner) {
+        userListViewModel.viewState.observe(viewLifecycleOwner) {
             when (it) {
-                is MainViewState.Loading -> setLoading(it.isLoading)
-                is MainViewState.SetUserList -> setUserList(it.userList)
-                MainViewState.Error -> setError()
+                is UserListViewState.Loading -> setLoading(it.isLoading)
+                is UserListViewState.SetUserList -> setUserList(it.userList)
+                UserListViewState.Error -> setError()
             }
         }
     }
@@ -55,9 +58,13 @@ class MainFragment : Fragment() {
         with(binding.rvUserList) {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = UsersAdapter(userList) { user ->
-                findNavController(binding.root).navigate(R.id.action_mainFragment_to_userFragment)
+
+                val bundle = Bundle()
+                bundle.putString(LOGIN_EXTRA, user.login)
+                findNavController(binding.root).navigate(R.id.action_userListFragment_to_userFragment, bundle)
             }
             visible()
+            setDividerItemDecoration()
         }
         binding.loading.gone()
     }
@@ -80,7 +87,7 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        mainViewModel.getUsers()
+        userListViewModel.dispatchAction(ViewAction.GetUserList)
     }
 
     override fun onDestroyView() {

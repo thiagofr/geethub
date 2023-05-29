@@ -9,5 +9,8 @@ interface GitHubService {
     fun getUsers(): Call<List<UserResponse>>
 
     @GET("/users/{user}")
-    fun getUser(@Path("user")login: String)
+    fun getUser(@Path("user") login: String): Call<UserResponse>
+
+    @GET("/users/{user}/repos")
+    fun getRepositoryList(@Path("user") login: String): Call<List<RepositoryResponse>>
 }

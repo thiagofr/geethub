@@ -1,12 +1,24 @@
 package com.thiagofr.geethub.di
 
-import com.thiagofr.geethub.domain.usecase.GetUserListUseCase
-import com.thiagofr.geethub.domain.usecase.GetUserListUseCaseImpl
+import com.thiagofr.geethub.domain.usecase.*
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    factory<GetUserListUseCase>{
+    factory<GetUserListUseCase> {
         GetUserListUseCaseImpl(
+            repository = get(),
+            mapper = get(),
+        )
+    }
+    factory<GetUserUserCase> {
+        GetUserUserCaseImpl(
+            repository = get(),
+            mapper = get(),
+            getRepositoryListByUserUseCase = get()
+        )
+    }
+    factory<GetRepositoryListByUserUseCase> {
+        GetRepositoryListByUserUseCaseImpl(
             repository = get(),
             mapper = get(),
         )
