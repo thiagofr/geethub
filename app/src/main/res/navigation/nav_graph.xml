@@ -1,0 +1,22 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.thiagofr.geethub.presenter.main.MainFragment"
+        android:label="Lista de usuário">
+        <action
+            android:id="@+id/action_mainFragment_to_userFragment"
+            app:destination="@id/userFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.thiagofr.geethub.presenter.user.UserFragment"
+        android:label="Usuário">
+    </fragment>
+
+</navigation>
