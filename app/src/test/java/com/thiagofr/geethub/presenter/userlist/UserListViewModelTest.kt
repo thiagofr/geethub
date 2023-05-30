@@ -3,8 +3,8 @@ package com.thiagofr.geethub.presenter.userlist
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.thiagofr.geethub.domain.model.Result
-import com.thiagofr.geethub.domain.model.User
 import com.thiagofr.geethub.domain.usecase.GetUserListUseCase
+import com.thiagofr.geethub.util.UserUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -13,7 +13,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CountDownLatch
@@ -45,19 +47,7 @@ class UserViewModelTest {
     fun `when viewAction is Init then ViewState must be Loading`() = runBlocking {
         val latch = CountDownLatch(1)
 
-        val user = User(
-            id = 1,
-            login = "login",
-            avatarUrl = "avatarUrl",
-            type = "type",
-            followers = 1,
-            following = 1,
-            location = "location",
-            name = "name",
-            repositoryList = null
-        )
-
-        val list = listOf(user)
+        val list = UserUtil.getUserList()
 
         viewModel.viewState.observeForever(observer)
 

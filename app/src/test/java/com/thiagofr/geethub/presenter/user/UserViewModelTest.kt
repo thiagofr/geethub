@@ -3,8 +3,8 @@ package com.thiagofr.geethub.presenter.user
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.thiagofr.geethub.domain.model.Result
-import com.thiagofr.geethub.domain.model.User
 import com.thiagofr.geethub.domain.usecase.GetUserUserCase
+import com.thiagofr.geethub.util.UserUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -13,7 +13,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CountDownLatch
@@ -45,25 +47,13 @@ class UserViewModelTest {
     fun `when viewAction is Init then ViewState must be Loading`() = runBlocking {
         val latch = CountDownLatch(1)
 
-        val login = "login"
-
-        val user = User(
-            id = 1,
-            login = "login",
-            avatarUrl = "avatarUrl",
-            type = "type",
-            followers = 1,
-            following = 1,
-            location = "location",
-            name = "name",
-            repositoryList = null
-        )
+        val user = UserUtil.getUser()
 
         viewModel.viewState.observeForever(observer)
 
-        `when`(getUserUserCase(login)).thenReturn(Result.Success(user))
+        `when`(getUserUserCase(LOGIN)).thenReturn(Result.Success(user))
 
-        viewModel.dispatchAction(UserViewAction.Init(login))
+        viewModel.dispatchAction(UserViewAction.Init(LOGIN))
 
         withContext(Dispatchers.IO) {
             latch.await(5, TimeUnit.MILLISECONDS)
@@ -79,13 +69,11 @@ class UserViewModelTest {
     fun `when viewAction is Init then ViewState must be Error`() = runBlocking {
         val latch = CountDownLatch(1)
 
-        val login = "login"
-
         viewModel.viewState.observeForever(observer)
 
-        `when`(getUserUserCase(login)).thenReturn(Result.Error(Exception("No data found")))
+        `when`(getUserUserCase(LOGIN)).thenReturn(Result.Error(Exception("No data found")))
 
-        viewModel.dispatchAction(UserViewAction.Init(login))
+        viewModel.dispatchAction(UserViewAction.Init(LOGIN))
 
         withContext(Dispatchers.IO) {
             latch.await(5, TimeUnit.MILLISECONDS)
@@ -95,5 +83,9 @@ class UserViewModelTest {
         verify(observer, times(1)).onChanged(UserViewState.Error)
 
         viewModel.viewState.removeObserver(observer)
+    }
+
+    companion object {
+        private const val LOGIN = "login"
     }
 }

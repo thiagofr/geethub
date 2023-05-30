@@ -1,6 +1,6 @@
 package com.thiagofr.geethub.domain.mapper
 
-import com.thiagofr.geethub.data.remote.api.RepositoryResponse
+import com.thiagofr.geethub.util.RepositoryResponseUtil
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -16,11 +16,7 @@ class RepositoryMapperImplTest {
 
     @Test
     fun map_fromApiResponse_returnsRepository() {
-        val apiResponse = RepositoryResponse(
-            name = "name",
-            fullName = "fullname",
-            isPrivate = false
-        )
+        val apiResponse = RepositoryResponseUtil.getRepositoryResponse()
 
         val repository = mapper.map(apiResponse)
 

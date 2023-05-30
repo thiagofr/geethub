@@ -1,6 +1,6 @@
 package com.thiagofr.geethub.domain.mapper
 
-import com.thiagofr.geethub.data.remote.api.UserResponse
+import com.thiagofr.geethub.util.UserResponseUtil
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -17,16 +17,7 @@ class UserMapperTest {
     @Test
     fun map_fromUserResponse_returnsUser() {
 
-        val userResponse = UserResponse(
-            id = 123,
-            login = "example_user",
-            type = "User",
-            avatarUrl = "https://example.com/avatar.png",
-            followers = 100,
-            following = 50,
-            location = "Example City",
-            name = "John Doe"
-        )
+        val userResponse = UserResponseUtil.getUserResponse()
 
         val user = mapper.map(userResponse)
 

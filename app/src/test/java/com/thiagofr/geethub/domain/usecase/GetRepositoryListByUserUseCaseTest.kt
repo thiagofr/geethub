@@ -1,10 +1,10 @@
 package com.thiagofr.geethub.domain.usecase
 
 import com.thiagofr.geethub.data.remote.api.Response
-import com.thiagofr.geethub.data.remote.api.RepositoryResponse
 import com.thiagofr.geethub.domain.mapper.RepositoryMapperImpl
 import com.thiagofr.geethub.domain.model.Result
 import com.thiagofr.geethub.domain.repository.UserRepository
+import com.thiagofr.geethub.util.RepositoryResponseUtil
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -31,36 +31,27 @@ class GetRepositoryListByUserUseCaseTest {
     @Test
     fun `invoke with valid login returns success result with repository list`() = runBlocking {
 
-        val login = "example_user"
-        val apiResponseList = listOf(
-            RepositoryResponse(
-                name = "repo1",
-                fullName = "Repository 1",
-                isPrivate = false
-            ),
-            RepositoryResponse(
-                name = "repo2",
-                fullName = "Repository 2",
-                isPrivate = true
-            )
-        )
+        val apiResponseList = RepositoryResponseUtil.getRepositoryResponseList()
         val expectedRepositoryList = apiResponseList.map { mapper.map(it) }
         val successResponse = Response.Success(apiResponseList)
-        `when`(repository.getRepositoryListByUser(login)).thenReturn(successResponse)
+        `when`(repository.getRepositoryListByUser(LOGIN)).thenReturn(successResponse)
 
-        val result = useCase.invoke(login)
+        val result = useCase.invoke(LOGIN)
 
         assertEquals(Result.Success(expectedRepositoryList), result)
     }
 
     @Test
     fun `invoke with invalid login returns error result`() = runBlocking {
-        val login = "invalid_user"
         val errorResponse = Response.Error(Exception("User not found"))
-        `when`(repository.getRepositoryListByUser(login)).thenReturn(errorResponse)
+        `when`(repository.getRepositoryListByUser(LOGIN)).thenReturn(errorResponse)
 
-        val result = useCase.invoke(login)
+        val result = useCase.invoke(LOGIN)
 
         assertEquals(Result.Error(errorResponse.exception), result)
+    }
+
+    companion object {
+        private const val LOGIN = "login"
     }
 }

@@ -1,110 +1,113 @@
+package com.thiagofr.geethub.domain.usecase
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.thiagofr.geethub.data.remote.api.Response
-import com.thiagofr.geethub.data.remote.api.UserResponse
 import com.thiagofr.geethub.domain.mapper.UserMapperImpl
-import com.thiagofr.geethub.domain.model.Repository
 import com.thiagofr.geethub.domain.model.Result
 import com.thiagofr.geethub.domain.model.User
 import com.thiagofr.geethub.domain.repository.UserRepository
-import com.thiagofr.geethub.domain.usecase.GetRepositoryListByUserUseCase
-import com.thiagofr.geethub.domain.usecase.GetUserUserCaseImpl
+import com.thiagofr.geethub.presenter.userlist.UserListViewModel
+import com.thiagofr.geethub.util.RepositoryUtil
+import com.thiagofr.geethub.util.UserResponseUtil
+import com.thiagofr.geethub.util.UserUtil
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
+import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnitRunner
 
-class GetUserUserCaseImplTest {
-    private val repository: UserRepository = mock(UserRepository::class.java)
-    private val mapper: UserMapperImpl = mock(UserMapperImpl::class.java)
-    private val getRepositoryListByUserUseCase: GetRepositoryListByUserUseCase =
-        mock(GetRepositoryListByUserUseCase::class.java)
+@RunWith(MockitoJUnitRunner::class)
+class GetUserUserCaseTest {
 
-    private val useCase = GetUserUserCaseImpl(repository, mapper, getRepositoryListByUserUseCase)
+    @Mock
+    private lateinit var repository: UserRepository
+
+    @Mock
+    private lateinit var mapper: UserMapperImpl
+
+    @Mock
+    private lateinit var getRepositoryListByUserUseCase: GetRepositoryListByUserUseCase
+
+    private lateinit var useCase: GetUserUserCase
+
+    @Before
+    fun setUp() {
+        MockitoAnnotations.openMocks(this)
+        useCase = GetUserUserCaseImpl(repository, mapper, getRepositoryListByUserUseCase)
+    }
 
     @Test
     fun `invoke should return success result with user`() = runBlocking {
 
-        val login = "exampleUser"
-        val userResponse = UserResponse(
-            id = 1,
-            login = login,
-            type = "user",
-            avatarUrl = "https://example.com/avatar.jpg",
-            followers = 100,
-            following = 50,
-            location = "Somewhere",
-            name = "John Doe"
+        val userResponse = UserResponseUtil.getUserResponse()
+        val user = UserUtil.getUser(
+            id = userResponse.id,
+            name = userResponse.name.orEmpty(),
+            login = userResponse.login,
+            avatarUrl = userResponse.avatarUrl,
+            type = userResponse.type,
+            following = userResponse.following ?: 1,
+            followers = userResponse.followers ?: 1,
+            location = userResponse.location.orEmpty(),
+            repositoryList = null
         )
 
-        val user = User(
-            id = 1,
-            login = login,
-            type = "user",
-            avatarUrl = "https://example.com/avatar.jpg",
-            followers = 100,
-            following = 50,
-            location = "Somewhere",
-            name = "John Doe",
-            repositoryList = emptyList()
-        )
+        `when`(repository.getUser(LOGIN)).thenReturn(Response.Success(userResponse))
 
-        val repositoryList = listOf(
-            Repository(name = "repo1", fullName = "Owner/repo1", isPrivate = false),
-            Repository(name = "repo2", fullName = "Owner/repo2", isPrivate = true)
-        )
+        val repositoryList = RepositoryUtil.getRepositoryList()
         val successResult = Result.Success(repositoryList)
 
-        `when`(repository.getUser(login)).thenReturn(Response.Success(userResponse))
-        `when`(getRepositoryListByUserUseCase(login)).thenReturn(successResult)
+        `when`(getRepositoryListByUserUseCase(LOGIN)).thenReturn(successResult)
         `when`(mapper.map(userResponse)).thenReturn(user)
 
-        val result = useCase.invoke(login)
+        val result = useCase.invoke(LOGIN)
 
-        verify(repository).getUser(login)
-        verify(getRepositoryListByUserUseCase).invoke(login)
+        verify(repository).getUser(LOGIN)
+        verify(getRepositoryListByUserUseCase).invoke(LOGIN)
         assertEquals(true, result is Result.Success)
         assertEquals(userResponse.login, (result as Result.Success<User>).data.login)
-        assertEquals(repositoryList, (result as Result.Success<User>).data.repositoryList)
+        assertEquals(repositoryList, result.data.repositoryList)
     }
 
     @Test
     fun `invoke should return error result when repository returns error response`() = runBlocking {
-        val login = "exampleUser"
         val errorResult = Result.Error(Exception("User not found"))
 
-        `when`(repository.getUser(login)).thenReturn(Response.Error(Exception("User not found")))
+        `when`(repository.getUser(LOGIN)).thenReturn(Response.Error(Exception("User not found")))
 
-        val result = useCase.invoke(login)
+        val result = useCase.invoke(LOGIN)
 
-        verify(repository).getUser(login)
+        verify(repository).getUser(LOGIN)
         assertEquals(true, result is Result.Error)
         assertEquals(errorResult.exception.message, (result as Result.Error).exception.message)
     }
 
     @Test
-    fun `invoke should return error result when getRepositoryListByUserUseCase returns error result`() = runBlocking {
-        val login = "exampleUser"
-        val userResponse = UserResponse(
-            id = 1,
-            login = login,
-            type = "user",
-            avatarUrl = "https://example.com/avatar.jpg",
-            followers = 100,
-            following = 50,
-            location = "Somewhere",
-            name = "John Doe"
-        )
-        val errorResult = Result.Error(Exception("Failed to fetch repository list"))
+    fun `invoke should return error result when getRepositoryListByUserUseCase returns error result`() =
+        runBlocking {
 
-        `when`(repository.getUser(login)).thenReturn(Response.Success(userResponse))
-        `when`(getRepositoryListByUserUseCase(login)).thenReturn(errorResult)
+            val userResponse = UserResponseUtil.getUserResponse()
 
-        val result = useCase.invoke(login)
+            val errorResult = Result.Error(Exception("Failed to fetch repository list"))
 
-        verify(repository).getUser(login)
-        verify(getRepositoryListByUserUseCase).invoke(login)
-        assertEquals(true, result is Result.Error)
-        assertEquals(errorResult.exception.message, (result as Result.Error).exception.message)
+            `when`(repository.getUser(LOGIN)).thenReturn(Response.Success(userResponse))
+            `when`(getRepositoryListByUserUseCase(LOGIN)).thenReturn(errorResult)
+
+            val result = useCase.invoke(LOGIN)
+
+            verify(repository).getUser(LOGIN)
+            verify(getRepositoryListByUserUseCase).invoke(LOGIN)
+            assertEquals(true, result is Result.Error)
+            assertEquals(errorResult.exception.message, (result as Result.Error).exception.message)
+        }
+
+    companion object {
+        private const val LOGIN = "login"
     }
 }
