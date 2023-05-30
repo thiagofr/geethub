@@ -2,6 +2,10 @@
 
 Este é um projeto Android que utiliza a arquitetura MVVM (Model-View-ViewModel) e incorpora conceitos de clean code.
 
+![home screen](https://github.com/thiagofr/geethub/assets/13332881/76a1d30a-766d-4883-bda4-1816e8d6ccfb)
+![user detail screen](https://github.com/thiagofr/geethub/assets/13332881/7e4bfb38-20aa-41db-9fef-e6e8b73d1a1d)
+
+
 ## Descrição da Arquitetura MVVM
 
 A arquitetura MVVM é um padrão arquitetural de software que separa a lógica de negócio da interface do usuário. Ela consiste em três componentes principais:
