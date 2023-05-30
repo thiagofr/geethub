@@ -46,7 +46,7 @@ class UserFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         userViewModel.viewState.observe(viewLifecycleOwner) {
             when (it) {
-                is UserViewState.Loading -> setLoading(it.isLoading)
+                is UserViewState.Loading -> setLoading()
                 is UserViewState.SetUserInfo -> setUserInfo(it.data)
                 UserViewState.Error -> setError()
             }
@@ -56,29 +56,30 @@ class UserFragment : Fragment() {
         userViewModel.dispatchAction(ViewAction.Init(login))
     }
 
-    private fun setUserInfo(user: User) {
+    private fun setUserInfo(user: User?) {
         with(binding) {
-            tvLogin.text = user.login
-            tvName.text = user.name
-            tvCity.text = user.location
+            user?.let {
+                tvLogin.text = user.login
+                tvName.text = user.name
+                tvCity.text = user.location
 
-            user.followers?.let {
-                setFollowersInfo(it)
+                user.followers?.let {
+                    setFollowersInfo(it)
+                }
+
+                user.following?.let {
+                    setFollowingInfo(it)
+                }
+                setImageUser(user.avatarUrl)
+                setRepositoryList(user.repositoryList)
+
+                content.visible()
+                loading.gone()
             }
-
-            user.following?.let {
-                setFollowingInfo(it)
-            }
-            setImageUser(user.avatarUrl)
-            setRepositoryList(user.repositoryList)
-
-            content.visible()
-            loading.gone()
-
         }
     }
 
-    private fun setRepositoryList(repositoryList: List<Repository>) {
+    private fun setRepositoryList(repositoryList: List<Repository>?) {
         with(binding) {
             rvRepo.layoutManager = LinearLayoutManager(
                 this@UserFragment.requireContext(),
@@ -86,7 +87,7 @@ class UserFragment : Fragment() {
                 false
             )
             rvRepo.adapter = RepositoryAdapter(
-                repositoryList
+                repositoryList ?: emptyList()
             )
 
             rvRepo.setDividerItemDecoration()
@@ -122,14 +123,10 @@ class UserFragment : Fragment() {
             .into(binding.imgUser)
     }
 
-    private fun setLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.loading.visible()
-            binding.content.gone()
-            binding.error.gone()
-        } else {
-            binding.loading.gone()
-        }
+    private fun setLoading() {
+        binding.loading.visible()
+        binding.content.gone()
+        binding.error.gone()
     }
 
     private fun setError() {

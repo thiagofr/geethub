@@ -12,7 +12,6 @@ import com.thiagofr.geethub.presenter.user.UserViewState as ViewState
 class UserViewModel(
     private val getUserUserCase: GetUserUserCase
 ) : ViewModel() {
-
     private val _viewState = MutableLiveData<ViewState>()
     val viewState: LiveData<ViewState> get() = _viewState
 
@@ -23,12 +22,14 @@ class UserViewModel(
     }
 
     private fun handleInit(login: String) = launch {
-        _viewState.postValue(ViewState.Loading(isLoading = true))
+        _viewState.postValue(ViewState.Loading)
 
         when (val result = getUserUserCase(login)) {
             is Result.Success -> {
+                val setUserInfo = ViewState.SetUserInfo
+                setUserInfo.data = result.data
                 _viewState.postValue(
-                    ViewState.SetUserInfo(result.data)
+                    setUserInfo
                 )
             }
             is Result.Error -> {

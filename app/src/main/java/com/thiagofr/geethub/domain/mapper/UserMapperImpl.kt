@@ -14,7 +14,7 @@ class UserMapperImpl : UserMapper<UserResponse, User> {
             following = from.following,
             location = from.location,
             name = from.name,
-            repositoryList = emptyList()
+            repositoryList = null
         )
     }
 }

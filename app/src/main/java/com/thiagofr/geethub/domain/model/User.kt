@@ -9,5 +9,5 @@ data class User(
     val following: Int?,
     val location: String?,
     val name: String?,
-    val repositoryList: List<Repository>
+    val repositoryList: List<Repository>?
 )
