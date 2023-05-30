@@ -38,6 +38,6 @@ class UserMapperTest {
         assertEquals(userResponse.following, user.following)
         assertEquals(userResponse.location, user.location)
         assertEquals(userResponse.name, user.name)
-        assertEquals(emptyList<String>(), user.repositoryList)
+        assertEquals(null, user.repositoryList)
     }
 }

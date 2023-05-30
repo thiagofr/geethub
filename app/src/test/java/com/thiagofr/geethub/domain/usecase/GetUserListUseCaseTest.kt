@@ -28,7 +28,6 @@ class GetUserListUseCaseImplTest {
 
     @Test
     fun `invoke returns success result with user list`() = runBlocking {
-        // Given
         val apiResponseList = listOf(
             UserResponse(
                 id = 1,
@@ -55,23 +54,18 @@ class GetUserListUseCaseImplTest {
         val successResponse = Response.Success(apiResponseList)
         `when`(repository.getUserList()).thenReturn(successResponse)
 
-        // When
         val result = useCase.invoke()
 
-        // Then
         assertEquals(Result.Success(expectedUserList), result)
     }
 
     @Test
     fun `invoke returns error result`() = runBlocking {
-        // Given
         val errorResponse = Response.Error(Exception("Failed to fetch user list"))
         `when`(repository.getUserList()).thenReturn(errorResponse)
 
-        // When
         val result = useCase.invoke()
 
-        // Then
         assertEquals(Result.Error(errorResponse.exception), result)
     }
 }

@@ -1,13 +1,10 @@
-package com.thiagofr.geethub.presenter
+package com.thiagofr.geethub.presenter.user
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.thiagofr.geethub.domain.model.Result
 import com.thiagofr.geethub.domain.model.User
 import com.thiagofr.geethub.domain.usecase.GetUserUserCase
-import com.thiagofr.geethub.presenter.user.UserViewAction
-import com.thiagofr.geethub.presenter.user.UserViewModel
-import com.thiagofr.geethub.presenter.user.UserViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext

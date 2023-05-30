@@ -47,26 +47,31 @@ class UserListFragment : Fragment() {
 
         userListViewModel.viewState.observe(viewLifecycleOwner) {
             when (it) {
-                is UserListViewState.Loading -> setLoading(it.isLoading)
+                is UserListViewState.Loading -> setLoading()
                 is UserListViewState.SetUserList -> setUserList(it.userList)
                 UserListViewState.Error -> setError()
             }
         }
     }
 
-    private fun setUserList(userList: List<User>) {
-        with(binding.rvUserList) {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            adapter = UsersAdapter(userList) { user ->
+    private fun setUserList(userList: List<User>?) {
+        userList?.let {
+            with(binding.rvUserList) {
+                layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+                adapter = UsersAdapter(userList) { user ->
 
-                val bundle = Bundle()
-                bundle.putString(LOGIN_EXTRA, user.login)
-                findNavController(binding.root).navigate(R.id.action_userListFragment_to_userFragment, bundle)
+                    val bundle = Bundle()
+                    bundle.putString(LOGIN_EXTRA, user.login)
+                    findNavController(binding.root).navigate(
+                        R.id.action_userListFragment_to_userFragment,
+                        bundle
+                    )
+                }
+                visible()
+                setDividerItemDecoration()
             }
-            visible()
-            setDividerItemDecoration()
+            binding.loading.gone()
         }
-        binding.loading.gone()
     }
 
     private fun setError() {
@@ -75,14 +80,10 @@ class UserListFragment : Fragment() {
         binding.error.visible()
     }
 
-    private fun setLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.loading.visible()
-            binding.rvUserList.gone()
-            binding.error.gone()
-        } else {
-            binding.loading.gone()
-        }
+    private fun setLoading() {
+        binding.loading.visible()
+        binding.rvUserList.gone()
+        binding.error.gone()
     }
 
     override fun onResume() {

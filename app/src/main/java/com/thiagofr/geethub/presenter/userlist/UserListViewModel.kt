@@ -23,11 +23,13 @@ class UserListViewModel(
     }
 
     private fun getUsers() = launch {
-        _viewState.postValue(ViewState.Loading(isLoading = true))
+        _viewState.postValue(ViewState.Loading)
         when (val result = getUserListUseCase()) {
             is Result.Success -> {
+                val setUserList = ViewState.SetUserList
+                setUserList.userList = result.data
                 _viewState.postValue(
-                    ViewState.SetUserList(result.data)
+                    setUserList
                 )
             }
             is Result.Error -> {
