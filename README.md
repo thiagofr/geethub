@@ -53,7 +53,7 @@ As seguintes dependências são utilizadas neste projeto:
 Para executar e testar o projeto, é necessário configurar o ambiente de desenvolvimento. Siga as etapas abaixo:
 
 1. Clone o repositório do projeto:
-   git clone https://github.com/thiagofr/geethub-android.git
+   git clone https://github.com/thiagofr/geethub.git
 2. Abra o projeto no Android Studio.
 3. Faça as configurações necessárias para executar o projeto em um dispositivo Android ou emulador.
 
