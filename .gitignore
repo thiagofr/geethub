@@ -12,6 +12,7 @@
 /.idea/gradle.xml
 /.idea/vcs.xml
 /.idea/jsLibraryMappings.xml
+/.idea/
 
 # Build
 /build/
@@ -50,5 +51,3 @@
 
 # Android Studio Navigation editor temp files
 /.idea/navEditor.xml
-
-/.idea/*
