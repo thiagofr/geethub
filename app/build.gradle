@@ -28,6 +28,31 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions += "version"
+
+    sourceSets {
+        mock {
+            java.srcDirs = ['src/mock/java']
+        }
+        dev {
+            java.srcDirs = ['src/dev/java']
+        }
+    }
+
+
+    productFlavors {
+        mock {
+            dimension = "version"
+            applicationIdSuffix ".mock"
+            versionNameSuffix "-mock"
+            buildConfigField "boolean", "IS_MOCK", "true"
+        }
+        dev {
+            dimension = "version"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -51,6 +76,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation 'com.airbnb.android:lottie:6.0.0'
     implementation 'org.mockito:mockito-core:5.3.1'
+    debugImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
+    mockImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
+
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     testImplementation 'junit:junit:4.13.2'

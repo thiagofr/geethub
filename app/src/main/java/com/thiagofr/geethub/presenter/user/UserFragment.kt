@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,8 +21,11 @@ import com.thiagofr.geethub.domain.model.User
 import com.thiagofr.geethub.presenter.user.adapter.RepositoryAdapter
 import com.thiagofr.geethub.util.LOGIN_EXTRA
 import com.thiagofr.geethub.util.gone
+import com.thiagofr.geethub.util.launch
 import com.thiagofr.geethub.util.setDividerItemDecoration
 import com.thiagofr.geethub.util.visible
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.thiagofr.geethub.presenter.user.UserViewAction as ViewAction
 
@@ -33,6 +37,19 @@ class UserFragment : Fragment() {
 
     private val userViewModel: UserViewModel by viewModel()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewLifecycleOwner.lifecycleScope.launch  {
+            userViewModel.viewState.collect { viewState ->
+                when (viewState) {
+                    is UserViewState.Init -> { handleInit() }
+                    is UserViewState.Loading -> setLoading()
+                    is UserViewState.SetUserInfo -> setUserInfo(viewState.data)
+                    is UserViewState.Error -> setError()
+                }
+            }
+        }
+        super.onViewCreated(view, savedInstanceState)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,16 +59,7 @@ class UserFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        userViewModel.viewState.observe(viewLifecycleOwner) {
-            when (it) {
-                is UserViewState.Loading -> setLoading()
-                is UserViewState.SetUserInfo -> setUserInfo(it.data)
-                UserViewState.Error -> setError()
-            }
-        }
-
+    private fun handleInit() {
         val login = arguments?.getString(LOGIN_EXTRA).orEmpty()
         userViewModel.dispatchAction(ViewAction.Init(login))
     }

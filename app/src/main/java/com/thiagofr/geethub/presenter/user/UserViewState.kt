@@ -3,6 +3,7 @@ package com.thiagofr.geethub.presenter.user
 import com.thiagofr.geethub.domain.model.User
 
 sealed class UserViewState {
+    object Init: UserViewState()
     object Loading: UserViewState()
     object SetUserInfo: UserViewState() {
         var data: User? = null

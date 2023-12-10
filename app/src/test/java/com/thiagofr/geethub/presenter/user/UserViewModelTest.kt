@@ -1,26 +1,27 @@
 package com.thiagofr.geethub.presenter.user
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import com.thiagofr.geethub.domain.model.Result
 import com.thiagofr.geethub.domain.usecase.GetUserUserCase
 import com.thiagofr.geethub.util.UserUtil
-import kotlinx.coroutines.Dispatchers
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import com.thiagofr.geethub.presenter.user.UserViewState as ViewState
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
 class UserViewModelTest {
 
@@ -28,9 +29,6 @@ class UserViewModelTest {
 
     @Mock
     private lateinit var getUserUserCase: GetUserUserCase
-
-    @Mock
-    private lateinit var observer: Observer<UserViewState>
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -44,45 +42,40 @@ class UserViewModelTest {
     }
 
     @Test
-    fun `when viewAction is Init then ViewState must be Loading`() = runBlocking {
-        val latch = CountDownLatch(1)
+    fun `when viewAction is Init then ViewState must be Loading`() = runTest {
+        viewModel.dispatchAction(UserViewAction.Init(LOGIN))
 
-        val user = UserUtil.getUser()
+        val viewState = viewModel.viewState.take(1).first()
 
-        viewModel.viewState.observeForever(observer)
+        assertTrue(viewState is ViewState.Loading)
+    }
 
-        `when`(getUserUserCase(LOGIN)).thenReturn(Result.Success(user))
+    @Test
+    fun `when viewAction is Init then ViewState must be SetUserInfo`() = runTest {
+        `when`(getUserUserCase(LOGIN)).thenReturn(
+            Result.Success(
+                data = mock()
+            )
+        )
 
         viewModel.dispatchAction(UserViewAction.Init(LOGIN))
 
-        withContext(Dispatchers.IO) {
-            latch.await(5, TimeUnit.MILLISECONDS)
-        }
+        val viewState = viewModel.viewState.take(2).first()
 
-        verify(observer, times(1)).onChanged(UserViewState.Loading)
-        verify(observer, times(1)).onChanged(UserViewState.SetUserInfo)
-
-        viewModel.viewState.removeObserver(observer)
+        assertTrue(viewState is ViewState.SetUserInfo)
     }
 
     @Test
     fun `when viewAction is Init then ViewState must be Error`() = runBlocking {
-        val latch = CountDownLatch(1)
-
-        viewModel.viewState.observeForever(observer)
 
         `when`(getUserUserCase(LOGIN)).thenReturn(Result.Error(Exception("No data found")))
 
         viewModel.dispatchAction(UserViewAction.Init(LOGIN))
 
-        withContext(Dispatchers.IO) {
-            latch.await(5, TimeUnit.MILLISECONDS)
-        }
+        val viewState = viewModel.viewState.take(2).first()
 
-        verify(observer, times(1)).onChanged(UserViewState.Loading)
-        verify(observer, times(1)).onChanged(UserViewState.Error)
+        assertTrue(viewState is ViewState.Error)
 
-        viewModel.viewState.removeObserver(observer)
     }
 
     companion object {
