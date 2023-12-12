@@ -28,8 +28,6 @@ class MockInterceptor : Interceptor, KoinComponent {
 
         val bodyTest = readJsonFromAssets(nameFile)
 
-//        if (mockResponse != null) {
-
         return Response.Builder()
             .code(200)
             .message("Mocked Response")
@@ -40,10 +38,6 @@ class MockInterceptor : Interceptor, KoinComponent {
                     ?.toResponseBody("application/json".toMediaTypeOrNull()),
             )
             .build();
-
-//        }
-
-//        return chain.proceed(chain.request())
     }
 
     private fun getNameFile(method: String, path: String): String {
