@@ -1,0 +1,12 @@
+[
+  {
+    "description": "Sucesso",
+    "statusCode": 200,
+    "filename": "get-users-thiago.json"
+  },
+  {
+    "description": "Retornar erro 500",
+    "statusCode": 500,
+    "filename": "get-users-error-500.json"
+  }
+]

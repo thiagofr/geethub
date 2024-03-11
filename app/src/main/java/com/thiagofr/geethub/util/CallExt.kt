@@ -12,7 +12,7 @@ fun <T : Any> Call<T>.getResult(): Response<T> {
             if (body != null) {
                 Response.Success(body)
             } else {
-                Response.Error(Exception("Response body is null"))
+                Response.Error(Exception("Respons.e body is null"))
             }
         } else {
             Response.Error(HttpException(response))

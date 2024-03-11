@@ -1,13 +1,12 @@
 package com.thiagofr.geethub.presenter
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.thiagofr.geethub.R
 import com.thiagofr.geethub.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
